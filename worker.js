@@ -1,3 +1,50 @@
+// don't delete this 
+const _navbardef = [
+   {title: "index", href:"/", type: "Home"}, 
+   {title: "biography", href:"/", type: "about"},
+  {title: "Career-goals", href:"", type:"career-goals"},
+  { title: "Activities-organization", href:"/", type:"activities-organization"},
+  {title: "Images", href:"/", type: "images"} ,
+]
+
+class Page {
+  constructor(navbar, title) {
+    this.navbar= navbar;
+    this.title = title;
+  }
+  get navbar {
+    return 
+  }
+  set navbar() {
+
+  }
+  get header {
+    return this.title
+  }
+  set header(title) {
+
+  }
+  get body {
+    return 0
+  }
+  set body(content){
+
+  }
+  get footer {
+    return 0
+  }
+  set footer(content){
+
+  }
+  render (){
+    return this.header + this.navbar + this.body + this.footer
+  }
+}
+
+
+
+
+
 const headCode = (args) => {
   return `<!DOCTYPE html>
   <html lang="en">
