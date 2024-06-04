@@ -33,6 +33,7 @@ class Page {
        
    </div>
 </footer>`
+this.backgroundColor = args.backgroundColor || "#Fddfed";
  }
  get navbar (){
   let output = ""
@@ -49,51 +50,104 @@ class Page {
   this._navbar = navbarObject
 
  }
- get header (){
-  return `<!DOCTYPE html>
-  <html lang="en">
-  <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>${this.title}</title>
-      <style>
-       
-      body {
-          font-family: Arial, sans-serif;
-          background-color: #f0f0f0;
-          color: #333;
-          margin: 0;
-          padding: 0;
-      }
-      header {
-          background-color: #333;
-          color: #fff;
-          padding: 10px 0;
-          text-align: center;
-      }
-      nav {
-          background-color: #444;
-          padding: 10px 0;
-          text-align: center;
-      }
-      nav a {
-          color: #fff;
-          text-decoration: none;
-          margin: 0 10px;
-      }
-      nav a:hover {
-          color: #ccc;
-      }
-     
-  </style>
-      <script src="https://kit.fontawesome.com/2101804b79.js" crossorigin="anonymous"></script>
-     
-  </head>
-  <body>
-      <header>
-          <h1 id="banner-text">Life of Alexander Meiners</h1>
-      </header>`
- }
+ get header() {
+    let pageStyles = "";
+    switch (this.title.toLowerCase()) {
+      case "home":
+        pageStyles = `
+          <style>
+            /* CSS styles for the home page */
+            body {
+              background-color: #Fddfed;
+            }
+            header {
+              background-color: #98FB98;
+              color: #fff;
+              padding: 10px 0;
+              text-align: center;
+            }
+            /* Add more styles specific to the home page */
+          </style>
+        `;
+        break;
+      case "biography":
+        pageStyles = `
+          <style>
+            /* CSS styles for the biography page */
+            body {
+              background-color: #ffffff;
+            }
+            header {
+              background-color: #008080;
+              color: #fff;
+              padding: 10px 0;
+              text-align: center;
+            }
+            /* Add more styles specific to the biography page */
+          </style>
+        `;
+        break;
+      // Add cases for other pages
+      default:
+        // Default styles for other pages
+        pageStyles = `
+          <style>
+            /* Default CSS styles */
+            body {
+              background-color: #Fddfed;
+            }
+            header {
+              background-color: #98FB98;
+              color: #fff;
+              padding: 10px 0;
+              text-align: center;
+            }
+            /* Add more default styles here */
+          </style>
+        `;
+        break;
+    }
+  
+    return `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>${this.title}</title>
+          <style>
+            /* Global styles */
+            body {
+              font-family: Arial, sans-serif;
+              color: #333;
+              margin: 0;
+              padding: 0;
+            }
+            nav {
+              background-color: #444;
+              padding: 10px 0;
+              text-align: center;
+            }
+            nav a {
+              color: #fff;
+              text-decoration: none;
+              margin: 0 10px;
+            }
+            nav a:hover {
+              color: #ccc;
+            }
+          </style>
+          ${pageStyles}
+          <script src="https://kit.fontawesome.com/2101804b79.js" crossorigin="anonymous"></script>
+      </head>
+      <body>
+          <header>
+              <h1 id="banner-text">Life of Alexander Meiners</h1>
+          </header>
+    `;
+  }
+  
+  
  set header(title) {
   this.title = title
  }
@@ -213,6 +267,7 @@ var src_default = {
        ` 
        const page = new Page({navbar: _navbardef, title: "home", body: htmlContent}) 
         return rawHtmlResponse (page.render())
+        
         
      }
      case "/bio": { 
