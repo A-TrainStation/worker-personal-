@@ -7,10 +7,64 @@ const _navbardef = [
  {title: "Images", href:"/gallary", type: "images"} ,
 ]
 
+function isObject(item) {
+    return (item && typeof item === 'object' && !Array.isArray(item));
+  }
+  
+   function mergeDeep(target, ...sources) {
+    if (!sources.length) return target;
+    const source = sources.shift();
+  
+    if (isObject(target) && isObject(source)) {
+      for (const key in source) {
+        if (isObject(source[key])) {
+          if (!target[key]) Object.assign(target, { [key]: {} });
+          mergeDeep(target[key], source[key]);
+        } else {
+          Object.assign(target, { [key]: source[key] });
+        }
+      }
+    }
+    
+  
+    return mergeDeep(target, ...sources);
+  }
+
 
 class Page {
+    static getStyleObject(style) {
+        const styleTypes = {
+            'home': {
+                header: {background_color:"000"},
+                body: {background_color:"e0ebeb", text_color:"ccf5ff"}
+            },
+            'greenlantern': {
+                header: {background_color:"ccffdd"},
+                body: {background_color:"e0ebeb", text_color:"ccf5ff"}
+            },
+            'purplecrayon': {
+                header: {background_color:"ccffdd"},
+                body: {background_color:"f7e6ff", text_color:"ccf5ff"}
+            },
+            'blueberry': {
+                header: {background_color:"ccffdd"},
+                body: {background_color:"b3f0ff", text_color:"ccf5ff"}
+            },
+            'yellow': {
+                header: {background_color:"ccffdd"},
+                body: {background_color:"e0ebeb", text_color:"ccf5ff"}
+            },
+            
+            'default': {
+                header: {background_color:"000", text_align:"center"},
+                body: {background_color:"e0ebeb", text_color:"fff"}
+            }
+        }
+        return styleTypes[style] || styleTypes['default']
+    }
  constructor(args) {
    this.navbar = args.navbar;
+   this.style = args.style;
    this.title = args.title;
    this.body = args.body;
    this.footer = args.footer ||`<footer>
@@ -50,64 +104,48 @@ this.backgroundColor = args.backgroundColor || "#Fddfed";
   this._navbar = navbarObject
 
  }
+ get style() {
+    const style = this._style
+    return `
+      header {
+        background-color: #${style.header.background_color};
+        color: #${style.header.text_color};
+        padding: 10px 0;
+        text-align: ${style.header.text_align};
+      }
+      
+      body {
+        font-family: Arial, sans-serif;
+        color: #333;
+        margin: 0;
+        padding: 0;
+        background-color: #${style.body.background_color};
+      }
+      nav {
+        background-color: #444;
+        padding: 10px 0;
+        text-align: center;
+      }
+      nav a {
+        color: #fff;
+        text-decoration: none;
+        margin: 0 10px;
+      }
+      nav a:hover {
+        color: #ccc;
+      }`
+ }
+ set style(args){
+    const styledef = Page.getStyleObject('default')
+    const merge = mergeDeep(styledef, args )
+    this._style = merge
+    // let style = Page.getStyleObject('home')
+    // style = {...style, body:{...style.body, background_color:"545400"}}
+    // ... new Page({...,style:{body:{background_color:"000"}, header:{background_color:"000"}}  ,...})
+    // ... new Page({...,style: style,...})
+}
  get header() {
-    let pageStyles = "";
-    switch (this.title.toLowerCase()) {
-      case "home":
-        pageStyles = `
-          <style>
-            /* CSS styles for the home page */
-            body {
-              background-color: #Fddfed;
-            }
-            header {
-              background-color: #98FB98;
-              color: #fff;
-              padding: 10px 0;
-              text-align: center;
-            }
-            /* Add more styles specific to the home page */
-          </style>
-        `;
-        break;
-      case "biography":
-        pageStyles = `
-          <style>
-            /* CSS styles for the biography page */
-            body {
-              background-color: #ffffff;
-            }
-            header {
-              background-color: #008080;
-              color: #fff;
-              padding: 10px 0;
-              text-align: center;
-            }
-            /* Add more styles specific to the biography page */
-          </style>
-        `;
-        break;
-      // Add cases for other pages
-      default:
-        // Default styles for other pages
-        pageStyles = `
-          <style>
-            /* Default CSS styles */
-            body {
-              background-color: #Fddfed;
-            }
-            header {
-              background-color: #98FB98;
-              color: #fff;
-              padding: 10px 0;
-              text-align: center;
-            }
-            /* Add more default styles here */
-          </style>
-        `;
-        break;
-    }
-  
+    
     return `
       <!DOCTYPE html>
       <html lang="en">
@@ -117,27 +155,9 @@ this.backgroundColor = args.backgroundColor || "#Fddfed";
           <title>${this.title}</title>
           <style>
             /* Global styles */
-            body {
-              font-family: Arial, sans-serif;
-              color: #333;
-              margin: 0;
-              padding: 0;
-            }
-            nav {
-              background-color: #444;
-              padding: 10px 0;
-              text-align: center;
-            }
-            nav a {
-              color: #fff;
-              text-decoration: none;
-              margin: 0 10px;
-            }
-            nav a:hover {
-              color: #ccc;
-            }
+            ${this.style}
           </style>
-          ${pageStyles}
+          
           <script src="https://kit.fontawesome.com/2101804b79.js" crossorigin="anonymous"></script>
       </head>
       <body>
@@ -265,7 +285,8 @@ var src_default = {
            startClock();
        </script>
        ` 
-       const page = new Page({navbar: _navbardef, title: "home", body: htmlContent}) 
+       const style = Page.getStyleObject('greenlantern')
+       const page = new Page({navbar: _navbardef, title: "home",style: style, body: htmlContent}) 
         return rawHtmlResponse (page.render())
         
         
@@ -450,7 +471,8 @@ var src_default = {
       </table>
       
       <img id="blog-image" alt="quotes" src="../Images/Quotes on computers.jpg"> ` 
-      const page = new Page({navbar: _navbardef, title: "home", body: htmlContent}) 
+      const style = Page.getStyleObject('blueberry')
+      const page = new Page({navbar: _navbardef, title: "home", style: style, body: htmlContent}) 
        return rawHtmlResponse (page.render())
        
     }
@@ -626,7 +648,8 @@ var src_default = {
           handleQuiz();
       };
   </script> ` 
-      const page = new Page({navbar: _navbardef, title: "home", body: htmlContent}) 
+      const style = Page.getStyleObject('purplecrayon')
+      const page = new Page({navbar: _navbardef, title: "home", style: style, body: htmlContent}) 
        return rawHtmlResponse (page.render())
        
     }
